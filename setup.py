@@ -15,7 +15,8 @@ setup(
     packages=find_packages(exclude=("tests",)),
     include_package_data=True,
     install_requires=[
-        "click>=7.1.2"
+        "click>=7.1.2",
+        "requests"
     ],
     entry_points={
         'console_scripts': ['stac_fastapi_loader=stac_fastapi_loader.cli_loader:main']
