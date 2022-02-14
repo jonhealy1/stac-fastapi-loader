@@ -3,7 +3,7 @@ import os
 import json
 import requests
 
-DATA_DIR = os.path.join(os.path.dirname(__file__), "test_data")
+DATA_DIR = os.path.join(os.path.dirname(__file__), "../../sentinel_data")
 STAC_API_BASE_URL = "http://localhost:8083"
 
 def cli_message():

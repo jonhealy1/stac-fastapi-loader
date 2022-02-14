@@ -131,3 +131,4 @@ dmypy.json
 **/.DS_Store
 
 /sentinel_data
+/stac_fastapi_loader/test_data/sentinel_data

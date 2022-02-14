@@ -65,7 +65,7 @@ feature_collection = {
     "features": features
 }
 
-path = 'sentinel_data/'
+path = 'stac_fastapi_loader/test_data/sentinel_data/'
 
 path_exists = os.path.exists(path)
 
