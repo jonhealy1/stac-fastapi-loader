@@ -3,7 +3,7 @@ import os
 import json
 import requests
 
-DATA_DIR = os.path.join(os.path.dirname(__file__), "../../sentinel_data")
+DATA_DIR = os.path.join(os.path.dirname(__file__), "test_data")
 STAC_API_BASE_URL = "http://localhost:8083"
 
 def cli_message():
@@ -28,11 +28,13 @@ def load_collection(collection_id):
         click.secho("failed to connect")
 
 def load_item():
-    items = load_data("sentinel_data/sentinel-s2-l2a-cogs_11_20.json")
+    items = load_data("sentinel_data/sentinel-s2-l2a-cogs_100_10000.json")
     collection = items["features"][0]["collection"]
     load_collection(collection)
     for feature in items["features"]:
         try:
+            feature["stac_extensions"] = []
+            feature["stac_version"] = "1.0.0"
             resp = requests.post(f"{STAC_API_BASE_URL}/collections/{collection}/items", json=feature)
             # click.secho(resp.status_code)
         except requests.ConnectionError:
