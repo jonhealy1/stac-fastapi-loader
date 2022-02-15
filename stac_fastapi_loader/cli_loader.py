@@ -28,9 +28,8 @@ def load_collection(collection_id):
     except requests.ConnectionError:
         click.secho("failed to connect")
 
-def load_item():
+def load_items():
     feature_collections = []
-    # items = load_data("sentinel_data/sentinel-s2-l2a-cogs_100001_150000.json")
     for filename in os.listdir(DATA_DIR):
         item = load_data(filename)
         feature_collections.append(item)
@@ -48,12 +47,34 @@ def load_item():
             except requests.ConnectionError:
                 click.secho("failed to connect")
 
-# @click.option(
-#     "-l", "--links", is_flag=True, help="Validate links for format and response."
-# )
+def load_item(filename):
+    print(filename)
+    feature_collection = load_data(str(filename))
+    collection = feature_collection["features"][0]["collection"]
+    print(collection)
+    load_collection(collection)
+    for feature in feature_collection["features"]: 
+        print(feature)
+        try:
+            feature["stac_extensions"] = []
+            feature["stac_version"] = "1.0.0"
+            resp = requests.post(f"{STAC_API_BASE_URL}/collections/{collection}/items", json=feature)
+        except requests.ConnectionError:
+            click.secho("failed to connect")
+
+@click.option(
+    "--folder", is_flag=True, help="Load all items in sentinel_data folder"
+)
+@click.option(
+    "--file",
+    help="Load one specified file",
+)
 @click.command()
 @click.argument('backend')
 @click.version_option(version="0.1.4")
-def main(backend):
+def main(backend, file, folder):
     cli_message()
-    load_item()
+    if folder:
+        load_items()
+    if file:
+        load_item(file)
