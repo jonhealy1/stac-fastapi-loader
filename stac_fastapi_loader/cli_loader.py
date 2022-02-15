@@ -4,7 +4,7 @@ import json
 import requests
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), "test_data/sentinel_data")
-STAC_API_BASE_URL = "http://localhost:8083"
+# STAC_API_BASE_URL = "http://localhost:8083"
 
 def cli_message():
     click.secho()
@@ -18,17 +18,17 @@ def load_data(filename):
     with open(os.path.join(DATA_DIR, filename)) as file:
         return json.load(file)
 
-def load_collection(collection_id):
+def load_collection(base_url, collection_id):
     data_dir = os.path.join(os.path.dirname(__file__), "test_data")
     with open(os.path.join(data_dir, "test_collection.json")) as file:
         collection = json.load(file)
     collection["id"] = collection_id
     try:
-        resp = requests.post(f"{STAC_API_BASE_URL}/collections", json=collection)
+        resp = requests.post(f"{base_url}/collections", json=collection)
     except requests.ConnectionError:
         click.secho("failed to connect")
 
-def load_items():
+def load_items(base_url):
     feature_collections = []
     for filename in os.listdir(DATA_DIR):
         item = load_data(filename)
@@ -36,29 +36,27 @@ def load_items():
         print(filename)
 
     collection = item["features"][0]["collection"]
-    load_collection(collection)
+    load_collection(base_url, collection)
     
     for items in feature_collections: 
         for feature in items["features"]:
             try:
                 feature["stac_extensions"] = []
                 feature["stac_version"] = "1.0.0"
-                resp = requests.post(f"{STAC_API_BASE_URL}/collections/{collection}/items", json=feature)
+                resp = requests.post(f"{base_url}/collections/{collection}/items", json=feature)
             except requests.ConnectionError:
                 click.secho("failed to connect")
 
-def load_item(filename):
+def load_item(base_url, filename):
     print(filename)
     feature_collection = load_data(str(filename))
     collection = feature_collection["features"][0]["collection"]
-    print(collection)
-    load_collection(collection)
+    load_collection(base_url, collection)
     for feature in feature_collection["features"]: 
-        print(feature)
         try:
             feature["stac_extensions"] = []
             feature["stac_version"] = "1.0.0"
-            resp = requests.post(f"{STAC_API_BASE_URL}/collections/{collection}/items", json=feature)
+            resp = requests.post(f"{base_url}/collections/{collection}/items", json=feature)
         except requests.ConnectionError:
             click.secho("failed to connect")
 
@@ -74,7 +72,12 @@ def load_item(filename):
 @click.version_option(version="0.1.4")
 def main(backend, file, folder):
     cli_message()
+    base_url = ""
+    if backend == 'mongo':
+        base_url = "http://localhost:8083"
+    elif backend == 'elasticsearch':
+        base_url = "http://localhost:8084"
     if folder:
-        load_items()
+        load_items(base_url)
     if file:
-        load_item(file)
+        load_item(base_url, file)
