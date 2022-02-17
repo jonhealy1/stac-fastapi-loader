@@ -4,9 +4,9 @@ from random import randint
 
 STAC_API_BASE_URL = "http://localhost:8083"
 
-COORDINATES = [[175.8, -82.84], [176.8, -82.84], [-176.0, -14.84]]
+COORDINATES = [[175.8, -82.84], [176.8, -82.84], [-176.0, -14.84], [-122.90, 35.21]]
 
-for x in range(10000):
+for x in range(1000):
     coord_1 = randint(-180, 180)
     coord_2 = randint(-90, 90)
     coordinates = [coord_1, coord_2]
