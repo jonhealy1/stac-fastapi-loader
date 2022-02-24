@@ -3,6 +3,8 @@ import os
 import json
 import requests
 
+from stac_fastapi_loader.bulk_mongo_loader import bulk_write
+
 DATA_DIR = os.path.join(os.path.dirname(__file__), "test_data/sentinel_data")
 # STAC_API_BASE_URL = "http://localhost:8083"
 
@@ -61,6 +63,9 @@ def load_item(base_url, filename):
             click.secho("failed to connect")
 
 @click.option(
+    "--bulk", is_flag=True, help="Bulk load items"
+)
+@click.option(
     "--folder", is_flag=True, help="Load all items in sentinel_data folder"
 )
 @click.option(
@@ -70,14 +75,16 @@ def load_item(base_url, filename):
 @click.command()
 @click.argument('backend')
 @click.version_option(version="0.1.4")
-def main(backend, file, folder):
+def main(backend, bulk, file, folder):
     cli_message()
     base_url = ""
     if backend == 'mongo':
         base_url = "http://localhost:8083"
     elif backend == 'elasticsearch':
-        base_url = "http://localhost:8084"
+        base_url = "http://localhost:8083"
     if folder:
         load_items(base_url)
     if file:
         load_item(base_url, file)
+    if bulk and backend == 'mongo':
+        bulk_write()

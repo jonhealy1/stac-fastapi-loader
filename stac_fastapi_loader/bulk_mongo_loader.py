@@ -53,5 +53,6 @@ def create_client():
 
     return client
 
-print("hello")
-unordered_bulk_write()
+def bulk_write():
+    print("hello")
+    unordered_bulk_write()

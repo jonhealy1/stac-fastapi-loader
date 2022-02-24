@@ -10,7 +10,7 @@ bucket = resource.Bucket('sentinel-cogs')
 collectionName = 'sentinel-s2-l2a-cogs'
 init_count = 210001
 count = 0
-final_count = 220000
+final_count = 300000
 features = []
 
 for item in bucket.objects.all():
