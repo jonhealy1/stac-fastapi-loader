@@ -8,9 +8,9 @@ resource.meta.client.meta.events.register('choose-signer.s3.*', disable_signing)
     
 bucket = resource.Bucket('sentinel-cogs')
 collectionName = 'sentinel-s2-l2a-cogs'
-init_count = 210001
+init_count = 0
 count = 0
-final_count = 300000
+final_count = 100
 features = []
 
 for item in bucket.objects.all():
@@ -37,22 +37,27 @@ for item in bucket.objects.all():
                     data = json.load(f)
                 os.remove(id + '.json')
 
-                self = "http://discovery-cosmos.azurewebsites.net/stac/collections/" + collectionName + "/items/" + id
-                parent = "http://discovery-cosmos.azurewebsites.net/stac/collections/" + collectionName
-                collection = "http://discovery-cosmos.azurewebsites.net/stac/collections/" + collectionName
-                root = "http://discovery-cosmos.azurewebsites.net/stac/"
-                title = "https://earth-search.aws.element84.com/v0/collections/sentinel-s2-l2a/items/" + id
-                canonical = "https://sentinel-cogs.s3.us-west-2.amazonaws.com/" + item.key
+                # self = "http://discovery-cosmos.azurewebsites.net/stac/collections/" + collectionName + "/items/" + id
+                # parent = "http://discovery-cosmos.azurewebsites.net/stac/collections/" + collectionName
+                # collection = "http://discovery-cosmos.azurewebsites.net/stac/collections/" + collectionName
+                # root = "http://discovery-cosmos.azurewebsites.net/stac/"
+                # title = "https://earth-search.aws.element84.com/v0/collections/sentinel-s2-l2a/items/" + id
+                # canonical = "https://sentinel-cogs.s3.us-west-2.amazonaws.com/" + item.key
 
-                data["links"] = [{"rel": "self", "href": self},
-                    #{"rel": "canonical", "href": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/15/S/VS/2017/11/S2A_15SVS_20171110_1_L2A/S2A_15SVS_20171110_1_L2A.json", "type": "application/json"},
-                    {"rel": "canonical", "href": canonical, "type": "application/json"},
-                    {"title": "Source STAC Item", "rel": "derived_from", "href": title, "type": "application/json"},
-                    {"rel": "parent", "href": parent},
-                    {"rel": "collection", "href": collection},
-                    {"rel": "root", "href": root}]
+                # data["links"] = [{"rel": "self", "href": self},
+                #     #{"rel": "canonical", "href": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/15/S/VS/2017/11/S2A_15SVS_20171110_1_L2A/S2A_15SVS_20171110_1_L2A.json", "type": "application/json"},
+                #     {"rel": "canonical", "href": canonical, "type": "application/json"},
+                #     {"title": "Source STAC Item", "rel": "derived_from", "href": title, "type": "application/json"},
+                #     {"rel": "parent", "href": parent},
+                #     {"rel": "collection", "href": collection},
+                #     {"rel": "root", "href": root}]
 
-                data["version"] = "1.0.0"
+                data["stac_version"] = "1.0.0"
+                data["stac_extensions"] = [
+                    "https://stac-extensions.github.io/eo/v1.0.0/schema.json",
+                    "https://stac-extensions.github.io/projection/v1.0.0/schema.json",
+                    "https://stac-extensions.github.io/view/v1.0.0/schema.json"
+                ]
 
                 features.append(data)
 
